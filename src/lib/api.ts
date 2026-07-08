@@ -35,7 +35,7 @@ export async function createNotice(payload: Omit<Notice, "id" | "createdAt" | "u
 
 export async function updateNotice(id: number, payload: Omit<Notice, "id" | "createdAt" | "updatedAt">) {
   const response = await fetch(`/api/notices/${id}`, {
-    method: "PUT",
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });

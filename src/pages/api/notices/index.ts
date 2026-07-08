@@ -25,17 +25,33 @@ export default async function handler(
     try {
       const { title, body, category, priority, publishDate, image } = req.body;
 
+      const allowedCategory = ["Exam", "Event", "General"];
+      const allowedPriority = ["Normal", "Urgent"];
+
       if (!title || !body || !category || !priority || !publishDate) {
         return res.status(400).json({ message: "All required fields must be provided" });
+      }
+
+      if (!allowedCategory.includes(category)) {
+        return res.status(400).json({ message: "Category must be Exam, Event, or General" });
+      }
+
+      if (!allowedPriority.includes(priority)) {
+        return res.status(400).json({ message: "Priority must be Normal or Urgent" });
+      }
+
+      const publishDateObject = new Date(publishDate);
+      if (Number.isNaN(publishDateObject.getTime())) {
+        return res.status(400).json({ message: "Publish date must be a valid date" });
       }
 
       const notice = await prisma.notice.create({
         data: {
           title: title.trim(),
           body: body.trim(),
-          category: category.trim(),
-          priority: priority.trim(),
-          publishDate: new Date(publishDate),
+          category,
+          priority,
+          publishDate: publishDateObject,
           image: image?.trim() || null,
         },
       });
